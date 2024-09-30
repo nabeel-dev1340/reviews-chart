@@ -22,14 +22,19 @@ function useChart() {
 }
 
 const ChartContainer = React.forwardRef(
-  ({ id, className, children, config, ...props }, ref) => {
+  ({ id, className, children, config, width, height, ...props }, ref) => {
     const uniqueId = React.useId();
     const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
 
     return (
       <ChartContext.Provider value={{ config }}>
         <div
-          style={{ width: "500px", height: "500px" }}
+          style={{
+            width: width,
+            height: height,
+            fontFamily: "Poppins",
+            marginLeft: width === "450px" ? "20px" : "",
+          }}
           data-chart={chartId}
           ref={ref}
           className={cn(
@@ -142,20 +147,20 @@ const ChartTooltipContent = React.forwardRef(
     if (!active || !payload?.length) {
       return null;
     }
-    console.log(payload);
 
     const nestLabel = payload.length === 1 && indicator !== "dot";
 
     return (
-      <div
-        ref={ref}
-        className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
-          className
-        )}
-      >
+      <div ref={ref} className={cn("", className)}>
         {!nestLabel ? tooltipLabel : null}
-        <div className="grid gap-1.5">
+        <div
+          className=""
+          style={{
+            background: "white",
+            borderRadius: "5px",
+            padding: "8px",
+          }}
+        >
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
@@ -201,13 +206,16 @@ const ChartTooltipContent = React.forwardRef(
                         nestLabel ? "items-end" : "items-center"
                       )}
                     >
-                      <div className="grid gap-1.5">
+                      <div
+                        className="grid gap-1.5"
+                        style={{ marginRight: "12px" }}
+                      >
                         {nestLabel ? tooltipLabel : null}
                         <span className="text-muted-foreground">
                           {`${item?.payload?.month.substring(
                             0,
                             3
-                          )} ${item?.payload?.year.toString().substring(2,4)}`}
+                          )} ${item?.payload?.year.toString().substring(2, 4)}`}
                         </span>
                       </div>
                       {item.value && (
